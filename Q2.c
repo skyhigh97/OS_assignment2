@@ -13,7 +13,7 @@ sem_t sem_process[8]; 	// semaphores for processes
 
 
 
-void *process1(void *num)	//needs resources A,B,C
+void *process1_function(void *num)	//needs resources A,B,C
 {
   
 	int *i = num;
@@ -77,7 +77,7 @@ void *process1(void *num)	//needs resources A,B,C
   
 }
 
-void *process2(void *num)	//needs resources B,C,D
+void *process2_function(void *num)	//needs resources B,C,D
 {
   
 	int *i = num;
@@ -141,7 +141,7 @@ void *process2(void *num)	//needs resources B,C,D
 
 }
 
-void *process3(void *num)	//needs resources A,C,D
+void *process3_function(void *num)	//needs resources A,C,D
 {
 
 	int *i = num;
@@ -204,7 +204,7 @@ void *process3(void *num)	//needs resources A,C,D
   
 }
 
-void *process4(void *num)	//needs resources A,B,D
+void *process4_function(void *num)	//needs resources A,B,D
 {
   
 	int *i = num;
@@ -267,7 +267,7 @@ void *process4(void *num)	//needs resources A,B,D
 
 }
 
-void *process5(void *num)	//needs resources A
+void *process5_function(void *num)	//needs resources A
 {
   
 	int *i = num;
@@ -301,7 +301,7 @@ void *process5(void *num)	//needs resources A
   
 }
 
-void *process6(void *num)	//needs resources B
+void *process6_function(void *num)	//needs resources B
 {
   
 	int *i = num;
@@ -334,7 +334,7 @@ void *process6(void *num)	//needs resources B
 	printf("Process 6 has occured %d times.\n",count6);
 }
 
-void *process7(void *num)	//needs resources C
+void *process7_function(void *num)	//needs resources C
 {
 	int *i = num;
 	int number1;
@@ -370,7 +370,7 @@ void *process7(void *num)	//needs resources C
 
 }
 
-void *process8(void *num)	//needs resources D
+void *process8_function(void *num)	//needs resources D
 {
 
 	int *i = num;
@@ -410,46 +410,40 @@ int main()
 {
   	int i,j;
 	srand(time(0)) ;	//create seed
+	printf("Enter k : ");
 	scanf("%u",&k);
 
-	pthread_t thread_id[k][8];
+	pthread_t thread_id[k][8];	//create threads
 
-	scanf("%u",&units_a);
-	scanf("%u",&units_b);
-	scanf("%u",&units_c);
-	scanf("%u",&units_d);
+	printf("Enter units of A : ");	scanf("%u",&units_a);
+	printf("Enter units of B : ");	scanf("%u",&units_b);
+	printf("Enter units of C : ");	scanf("%u",&units_c);
+	printf("Enter units of D : ");	scanf("%u",&units_d);
 
+	//Semaphores for resources
 	sem_init(&sem_resource[0], 0, units_a);
 	sem_init(&sem_resource[1], 0, units_b);
 	sem_init(&sem_resource[2], 0, units_c);
 	sem_init(&sem_resource[3], 0, units_d);
-	/*
-	sem_init(&sem_process[0], 0, 1);
-	sem_init(&sem_process[1], 0, 1);
-	sem_init(&sem_process[2], 0, 1);
-	sem_init(&sem_process[3], 0, 1);
-	sem_init(&sem_process[4], 0, 1);
-	sem_init(&sem_process[5], 0, 1);
-	sem_init(&sem_process[6], 0, 1);
-	sem_init(&sem_process[7], 0, 1);	*/
 
+	//Semaphores for processes
 	for(i=0; i<num_process; i++)
 		sem_init(&sem_process[i], 0, 1);
 
-	
+	//create threads and assign them functions
 	for(i=0;i<k;i++)
 	{
-		pthread_create(&thread_id[i][0],NULL,process1,&i);
-		pthread_create(&thread_id[i][1],NULL,process2,&i);
-		pthread_create(&thread_id[i][2],NULL,process3,&i);
-		pthread_create(&thread_id[i][3],NULL,process4,&i);
-		pthread_create(&thread_id[i][4],NULL,process5,&i);
-		pthread_create(&thread_id[i][5],NULL,process6,&i);
-		pthread_create(&thread_id[i][6],NULL,process7,&i);
-		pthread_create(&thread_id[i][7],NULL,process8,&i);
+		pthread_create(&thread_id[i][0],NULL,process1_function,&i);
+		pthread_create(&thread_id[i][1],NULL,process2_function,&i);
+		pthread_create(&thread_id[i][2],NULL,process3_function,&i);
+		pthread_create(&thread_id[i][3],NULL,process4_function,&i);
+		pthread_create(&thread_id[i][4],NULL,process5_function,&i);
+		pthread_create(&thread_id[i][5],NULL,process6_function,&i);
+		pthread_create(&thread_id[i][6],NULL,process7_function,&i);
+		pthread_create(&thread_id[i][7],NULL,process8_function,&i);
 	}
 	
-
+	//join all threads
 	for(i=0;i<k;i++)
 	{
 		for(j=0; j<num_process; j++)
