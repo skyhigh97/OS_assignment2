@@ -43,14 +43,14 @@ void *process1_function(void *num)	//needs resources A,B,C
 	sem_post(&sem_process[0]);
 
 	display_resources();
-	
+
 	while(resource1_collected==0)
 	{
 		number1 = rand( ) % 1000 + 1;
 		if(number1<=666)
 		{
 			sem_post(&sem_resource[0]);
-			printf("Process 1 has released A\n");
+			//printf("Process 1 has released A\n");
 			resource1_collected=1;
 		}
 	}
@@ -61,7 +61,7 @@ void *process1_function(void *num)	//needs resources A,B,C
 		if(number2<=750)
 		{
 			sem_post(&sem_resource[1]);
-			printf("Process 1 has released B\n");
+			//printf("Process 1 has released B\n");
 			resource2_collected=1;
 		}
 	}
@@ -72,7 +72,7 @@ void *process1_function(void *num)	//needs resources A,B,C
 		if(number3<=600)
 		{
 			sem_post(&sem_resource[2]);
-			printf("Process 1 has released C\n");
+			//printf("Process 1 has released C\n");
 			resource3_collected=1;
 		}
 	}
@@ -95,17 +95,18 @@ void *process2_function(void *num)	//needs resources B,C,D
 	resource3_collected=0;
 	resource4_collected=0;
 
-	printf("Process 2 is waiting to enter critical section\n");
+	//printf("Process 2 is waiting to enter critical section\n");
 	sem_wait(&sem_resource[1]);
-	printf("Process 2 collected B\n");
+	//printf("Process 2 collected B\n");
 
 	sem_wait(&sem_resource[2]);
-	printf("Process 2 collected C\n");
+	//printf("Process 2 collected C\n");
 
 	sem_wait(&sem_resource[3]);
-	printf("Process 2 collected D\n");
+	//printf("Process 2 collected D\n");
 
-	printf("Process 2 has entered critical section\n");
+	printf("Process 2 is running...\n");
+	display_resources();
 	sem_post(&sem_process[1]);
 
 	while(resource2_collected==0)
@@ -115,7 +116,7 @@ void *process2_function(void *num)	//needs resources B,C,D
 		{
 			sem_post(&sem_resource[1]);
 			resource2_collected=1;
-			printf("Process 2 has released B\n");
+			//printf("Process 2 has released B\n");
 		}
 	}
 
@@ -126,7 +127,7 @@ void *process2_function(void *num)	//needs resources B,C,D
 		{
 			sem_post(&sem_resource[2]);
 			resource3_collected=1;
-			printf("Process 2 has released C\n");
+			//printf("Process 2 has released C\n");
 		}
 	}
 
@@ -137,7 +138,7 @@ void *process2_function(void *num)	//needs resources B,C,D
 		{
 			sem_post(&sem_resource[3]);
 			resource4_collected=1;
-			printf("Process 2 has released D");
+			//printf("Process 2 has released D");
 		}
 	}
 
@@ -158,17 +159,18 @@ void *process3_function(void *num)	//needs resources A,C,D
 	resource3_collected=0;
 	resource4_collected=0;
 
-	printf("Process 3 is waiting to enter critical section\n");
+	//printf("Process 3 is waiting to enter critical section\n");
 	sem_wait(&sem_resource[0]);
-	printf("Process 3 collected A\n");
+	//printf("Process 3 collected A\n");
 
 	sem_wait(&sem_resource[2]);
-	printf("Process 3 collected C\n");
+	//printf("Process 3 collected C\n");
 
 	sem_wait(&sem_resource[3]);
-	printf("Process 3 collected D\n");
+	//printf("Process 3 collected D\n");
 
-	printf("Process 3 has entered critical section\n");
+	printf("Process 3 is running...\n");
+	display_resources();
 	sem_post(&sem_process[2]);
 
 	while(resource1_collected==0)
@@ -178,7 +180,7 @@ void *process3_function(void *num)	//needs resources A,C,D
 		{
 			sem_post(&sem_resource[0]);
 			resource1_collected=1;
-			printf("Process 3 has released A\n");
+			//printf("Process 3 has released A\n");
 		}
 	}
 
@@ -189,7 +191,7 @@ void *process3_function(void *num)	//needs resources A,C,D
 		{
 			sem_post(&sem_resource[2]);
 			resource3_collected=1;
-			printf("Process 3 has released C\n");
+			//printf("Process 3 has released C\n");
 		}
 	}
 
@@ -200,7 +202,7 @@ void *process3_function(void *num)	//needs resources A,C,D
 		{
 			sem_post(&sem_resource[3]);
 			resource4_collected=1;
-			printf("Process 3 has released D\n");
+			//printf("Process 3 has released D\n");
 		}
 	}
 
@@ -222,17 +224,18 @@ void *process4_function(void *num)	//needs resources A,B,D
 	resource2_collected=0;
 	resource4_collected=0;
 
-	printf("Process 4 is waiting to enter critical section\n");
+	//printf("Process 4 is waiting to enter critical section\n");
 	sem_wait(&sem_resource[0]);
-	printf("Process 4 collected A\n");
+	//printf("Process 4 collected A\n");
 
 	sem_wait(&sem_resource[1]);
-	printf("Process 4 collected B\n");
+	//printf("Process 4 collected B\n");
 
 	sem_wait(&sem_resource[3]);
-	printf("Process 4 collected D\n");
+	//printf("Process 4 collected D\n");
 
-	printf("Process 4 has entered critical section\n");
+	printf("Process 4 is running...\n");
+	display_resources();
 	sem_post(&sem_process[3]);
 
 	while(resource1_collected==0)
@@ -242,7 +245,7 @@ void *process4_function(void *num)	//needs resources A,B,D
 		{
 			sem_post(&sem_resource[0]);
 			resource1_collected=1;
-			printf("Process 4 has released A\n");
+			//printf("Process 4 has released A\n");
 		}
 	}
 
@@ -253,7 +256,7 @@ void *process4_function(void *num)	//needs resources A,B,D
 		{
 			sem_post(&sem_resource[1]);
 			resource2_collected=1;
-			printf("Process 4 has released B\n");
+			//printf("Process 4 has released B\n");
 		}
 	}
 
@@ -264,7 +267,7 @@ void *process4_function(void *num)	//needs resources A,B,D
 		{
 			sem_post(&sem_resource[3]);
 			resource4_collected=1;
-			printf("Process 4 has released D\n");
+			//printf("Process 4 has released D\n");
 		}
 	}
 
@@ -283,11 +286,12 @@ void *process5_function(void *num)	//needs resources A
 	int resource1_collected;
 	resource1_collected=0;
 
-	printf("Process 5 is waiting to enter critical section\n");
+	//printf("Process 5 is waiting to enter critical section\n");
 	sem_wait(&sem_resource[0]);
-	printf("Process 5 collected A\n");
+	//printf("Process 5 collected A\n");
 
-	printf("Process 5 has entered critical section\n");
+	printf("Process 5 is running...\n");
+	display_resources();
 	sem_post(&sem_process[4]);
 
 	while(resource1_collected==0)
@@ -297,7 +301,7 @@ void *process5_function(void *num)	//needs resources A
 		{
 			sem_post(&sem_resource[0]);
 			resource1_collected=1;
-			printf("Process 5 has released A\n");
+			//printf("Process 5 has released A\n");
 		}
 	}
 
@@ -317,11 +321,12 @@ void *process6_function(void *num)	//needs resources B
 	int resource2_collected;
 	resource2_collected=0;
 
-	printf("Process 6 is waiting to enter critical section\n");
+	//printf("Process 6 is waiting to enter critical section\n");
 	sem_wait(&sem_resource[1]);
-	printf("Process 6 collected B\n");
+	//printf("Process 6 collected B\n");
 
-	printf("Process 6 has entered critical section\n");
+	printf("Process 6 is running...\n");
+	display_resources();
 	sem_post(&sem_process[5]);
 
 	while(resource2_collected==0)
@@ -331,7 +336,7 @@ void *process6_function(void *num)	//needs resources B
 		{
 			sem_post(&sem_resource[1]);
 			resource2_collected=1;
-			printf("Process 4 has released B\n");
+			//printf("Process 4 has released B\n");
 		}
 	}
 
@@ -350,11 +355,12 @@ void *process7_function(void *num)	//needs resources C
 	int resource3_collected;
 	resource3_collected=0;
 
-	printf("Process 7 is waiting to enter critical section\n");
+	//printf("Process 7 is waiting to enter critical section\n");
 	sem_wait(&sem_resource[2]);
-	printf("Process 7 collected C\n");
+	//printf("Process 7 collected C\n");
 
-	printf("Process 7 has entered critical section\n");
+	printf("Process 7 is running...\n");
+	display_resources();
 	sem_post(&sem_process[6]);
 
 
@@ -366,7 +372,7 @@ void *process7_function(void *num)	//needs resources C
 		{
 			sem_post(&sem_resource[2]);
 			resource3_collected=1;
-			printf("Process 7 has released C\n");
+			//printf("Process 7 has released C\n");
 		}
 	}
 
@@ -386,12 +392,13 @@ void *process8_function(void *num)	//needs resources D
 	int resource4_collected;
 	resource4_collected=0;
 
-	printf("Process 8 is waiting to enter critical section\n");
+	//printf("Process 8 is waiting to enter critical section\n");
 	sem_wait(&sem_resource[3]);
-	printf("Process 8 collected D\n");
+	//printf("Process 8 collected D\n");
 
 
-	printf("Process 8 has entered critical section\n");
+	printf("Process 8 is running...\n");
+	display_resources();
 	sem_post(&sem_process[7]);
 
 	while(resource4_collected==0)
@@ -401,13 +408,13 @@ void *process8_function(void *num)	//needs resources D
 		{
 			sem_post(&sem_resource[3]);
 			resource4_collected=1;
-			printf("Process 4 has released D\n");
+			//printf("Process 8 has released D\n");
 		}
 	}
 
 
 	count8++;
-	printf("Process 8 has occured %d times. YAYAYYAYAYAYAYA\n",count8);
+	printf("Process 8 has occured %d times.\n",count8);
 
 }
 
