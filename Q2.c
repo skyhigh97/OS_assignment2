@@ -433,7 +433,7 @@ int main()
 	sem_init(&sem_process[6], 0, 1);
 	sem_init(&sem_process[7], 0, 1);	*/
 
-	for(i=0; i<mum_process; i++)
+	for(i=0; i<num_process; i++)
 		sem_init(&sem_process[i], 0, 1);
 
 	
