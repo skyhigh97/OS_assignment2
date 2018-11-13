@@ -5,11 +5,20 @@
 #include<unistd.h>
 
 unsigned int units_a,units_b,units_c,units_d,k;
-int count1,count2,count3,count4,count5,count6,count7,count8;
+//processes currently using each resources
+unsigned int cur_usingA=0, cur_usingB=0,cur_usingC=0,cur_usingD=0;
+int count[8] ={0};	//count no. of times process has run
+
 const int num_process = 8, num_resources = 4;
 
-sem_t sem_resource[4];  // semaphores for resources
-sem_t sem_process[8]; 	// semaphores for processes
+double probabilityA = 2/3.0;	//probability of releasing
+double probabilityB = 3/4.0;
+double probabilityC = 3/5.0;
+double probabilityD = 2/3.0;
+
+// semaphores for resources
+sem_t sem_resourceA, sem_resourceB, sem_resourceC, sem_resourceD;  
+sem_t sem_main; 	// semaphores for processes
 
 void display_resources()
 {
@@ -20,404 +29,340 @@ void display_resources()
 void *process1_function(void *num)	//needs resources A,B,C
 {
   
-	int *i = num;
-	int number1,number2,number3;
+	sem_wait(&sem_main);
 
-	sem_wait(&sem_process[0]);
-	int resource1_collected, resource2_collected, resource3_collected;
-	resource1_collected=0;
-	resource2_collected=0;
-	resource3_collected=0;
-
-	printf("Process 1 is waiting to enter critical section\n");
-	sem_wait(&sem_resource[0]);
-	//printf("Process 1 collected resource A\n");
-
-	sem_wait(&sem_resource[1]);
-	//printf("Process 1 collected resource B\n");
-
-	sem_wait(&sem_resource[2]);
-	//printf("Process 1 collected resource C\n");
-	
-	printf("Process 1 is running...\n");
-	sem_post(&sem_process[0]);
-
-	display_resources();
-
-	while(resource1_collected==0)
+	if(units_a>=1 && units_b>=1 && units_c>=1)
 	{
-		number1 = rand( ) % 1000 + 1;
-		if(number1<=666)
+		//wait for a resource
+		sem_wait(&sem_resourceA);
+		//update units remaining and process using the unit
+		units_a--;	cur_usingA++;
+
+		sem_wait(&sem_resourceB);
+		units_b--;	cur_usingB++;
+
+		sem_wait(&sem_resourceC);
+		units_c--;	cur_usingC++;
+
+		printf("Process 1 running....\n");
+		display_resources();
+		printf("Process 1 ending....\n");
+
+		int tmp = rand()%10;
+		probability = tmp/10.0;
+		if(probability<=probabilityA)	//relaease A
 		{
-			sem_post(&sem_resource[0]);
-			//printf("Process 1 has released A\n");
-			resource1_collected=1;
+			sem_post(&sem_resourceA);	units_a++;
 		}
+		if(probability<=probabilityB)	
+		{
+			sem_post(&sem_resourceB);	units_b++;
+		}
+		if(probability<=probabilityC)	
+		{
+			sem_post(&sem_resourceC);	units_c++;
+		}
+
+		count[0]++;
+		cur_usingA--;	cur_usingB--;	cur_usingC--;
 	}
 
-	while(resource2_collected==0)
+	else
 	{
-		number2 = rand( ) % 1000 + 1;
-		if(number2<=750)
-		{
-			sem_post(&sem_resource[1]);
-			//printf("Process 1 has released B\n");
-			resource2_collected=1;
-		}
+		printf("Process 1 failed to execute...\n");
 	}
 
-	while(resource3_collected==0)
-	{
-		number3 =  rand() % 1000 + 1;
-		if(number3<=600)
-		{
-			sem_post(&sem_resource[2]);
-			//printf("Process 1 has released C\n");
-			resource3_collected=1;
-		}
-	}
-
-
-	count1++;
-		printf("Process 1 has occured %d times till now. \n",count1);
-  
+	if(count[0]<k)
+		process1_function(NULL);
 }
 
 void *process2_function(void *num)	//needs resources B,C,D
 {
   
-	int *i = num;
-	int number1,number2,number3;
+	sem_wait(&sem_main);
 
-	sem_wait(&sem_process[1]);
-	int resource2_collected, resource3_collected, resource4_collected;
-	resource2_collected=0;
-	resource3_collected=0;
-	resource4_collected=0;
-
-	//printf("Process 2 is waiting to enter critical section\n");
-	sem_wait(&sem_resource[1]);
-	//printf("Process 2 collected B\n");
-
-	sem_wait(&sem_resource[2]);
-	//printf("Process 2 collected C\n");
-
-	sem_wait(&sem_resource[3]);
-	//printf("Process 2 collected D\n");
-
-	printf("Process 2 is running...\n");
-	display_resources();
-	sem_post(&sem_process[1]);
-
-	while(resource2_collected==0)
+	if(units_b>=1 && units_c>=1 && units_d>=1)
 	{
-		number1 = rand( ) % 1000 + 1;
-		if(number2<=750)
+		
+		sem_wait(&sem_resourceB);
+		units_b--;	cur_usingB++;
+
+		sem_wait(&sem_resourceC);
+		units_c--;	cur_usingC++;
+
+		sem_wait(&sem_resourceD);
+		units_d--;	cur_usingD++;
+
+		printf("Process 2 running....\n");
+		display_resources();
+		printf("Process 2 ending....\n");
+
+		int tmp = rand()%10;
+		probability = tmp/10.0;
+		if(probability<=probabilityB)	//relaease A
 		{
-			sem_post(&sem_resource[1]);
-			resource2_collected=1;
-			//printf("Process 2 has released B\n");
+			sem_post(&sem_resourceB);	units_b++;
 		}
+		if(probability<=probabilityC)	
+		{
+			sem_post(&sem_resourceC);	units_c++;
+		}
+		if(probability<=probabilityD)	
+		{
+			sem_post(&sem_resourceD);	units_d++;
+		}
+
+		count[1]++;
+		cur_usingB--;	cur_usingC--;	cur_usingD--;
 	}
 
-	while(resource3_collected==0)
+	else
 	{
-		number2 =  rand( ) % 1000 + 1;
-		if(number2<=600)
-		{
-			sem_post(&sem_resource[2]);
-			resource3_collected=1;
-			//printf("Process 2 has released C\n");
-		}
+		printf("Process 2 failed to execute...\n");
 	}
 
-	while(resource4_collected==0)
-	{
-		number3 =  rand( ) % 1000 + 1;
-		if(number3<=666)
-		{
-			sem_post(&sem_resource[3]);
-			resource4_collected=1;
-			//printf("Process 2 has released D");
-		}
-	}
-
-
-	count2++;
-	printf("Process 2 has occured %d times.\n",count2);
-
+	if(count[1]<k)
+		process2_function(NULL);
 }
+
 
 void *process3_function(void *num)	//needs resources A,C,D
 {
-
-	int *i = num;
-	int number1,number2,number3;
-	sem_wait(&sem_process[2]);
-	int resource1_collected, resource3_collected, resource4_collected;
-	resource1_collected=0;
-	resource3_collected=0;
-	resource4_collected=0;
-
-	//printf("Process 3 is waiting to enter critical section\n");
-	sem_wait(&sem_resource[0]);
-	//printf("Process 3 collected A\n");
-
-	sem_wait(&sem_resource[2]);
-	//printf("Process 3 collected C\n");
-
-	sem_wait(&sem_resource[3]);
-	//printf("Process 3 collected D\n");
-
-	printf("Process 3 is running...\n");
-	display_resources();
-	sem_post(&sem_process[2]);
-
-	while(resource1_collected==0)
-	{
-		number1 = rand( ) % 1000 + 1;
-		if(number2<=666)
-		{
-			sem_post(&sem_resource[0]);
-			resource1_collected=1;
-			//printf("Process 3 has released A\n");
-		}
-	}
-
-	while(resource3_collected==0)
-	{
-		number2 =  rand( ) % 1000 + 1;
-		if(number2<=600)
-		{
-			sem_post(&sem_resource[2]);
-			resource3_collected=1;
-			//printf("Process 3 has released C\n");
-		}
-	}
-
-	while(resource4_collected==0)
-	{
-		number3 =  rand( ) % 1000 + 1;
-		if(number3<=666)
-		{
-			sem_post(&sem_resource[3]);
-			resource4_collected=1;
-			//printf("Process 3 has released D\n");
-		}
-	}
-
-
-	count3++;
-	printf("Process 3 has occured %d times.\n",count3);
   
+	sem_wait(&sem_main);
+
+	if(units_a>=1 && units_c>=1 && units_d>=1)
+	{
+		
+		sem_wait(&sem_resourceA);
+		units_a--;	cur_usingA++;
+
+		sem_wait(&sem_resourceC);
+		units_c--;	cur_usingC++;
+
+		sem_wait(&sem_resourceD);
+		units_d--;	cur_usingD++;
+
+		printf("Process 3 running....\n");
+		display_resources();
+		printf("Process 3 ending....\n");
+
+		int tmp = rand()%10;
+		probability = tmp/10.0;
+		if(probability<=probabilityA)	
+		{
+			sem_post(&sem_resourceA);	units_a++;
+		}
+		if(probability<=probabilityC)	
+		{
+			sem_post(&sem_resourceC);	units_c++;
+		}
+		if(probability<=probabilityD)	
+		{
+			sem_post(&sem_resourceD);	units_d++;
+		}
+
+		count[2]++;
+		cur_usingA--;	cur_usingC--;	cur_usingD--;
+	}
+
+	else
+	{
+		printf("Process 3 failed to execute...\n");
+	}
+
+	if(count[2]<k)
+		process3_function(NULL);
 }
 
 void *process4_function(void *num)	//needs resources A,B,D
 {
   
-	int *i = num;
-	int number1, number2,number3;
+	sem_wait(&sem_main);
 
-	sem_wait(&sem_process[3]);
-	int resource1_collected, resource2_collected, resource4_collected;
-	resource1_collected=0;
-	resource2_collected=0;
-	resource4_collected=0;
-
-	//printf("Process 4 is waiting to enter critical section\n");
-	sem_wait(&sem_resource[0]);
-	//printf("Process 4 collected A\n");
-
-	sem_wait(&sem_resource[1]);
-	//printf("Process 4 collected B\n");
-
-	sem_wait(&sem_resource[3]);
-	//printf("Process 4 collected D\n");
-
-	printf("Process 4 is running...\n");
-	display_resources();
-	sem_post(&sem_process[3]);
-
-	while(resource1_collected==0)
+	if(units_a>=1 && units_b>=1 && units_d>=1)
 	{
-		number1 = rand( ) % 1000 + 1;
-		if(number2<=666)
+		
+		sem_wait(&sem_resourceA);
+		units_a--;	cur_usingA++;
+
+		sem_wait(&sem_resourceB);
+		units_b--;	cur_usingB++;
+
+		sem_wait(&sem_resourceD);
+		units_d--;	cur_usingD++;
+
+		printf("Process 4 running....\n");
+		display_resources();
+		printf("Process 4 ending....\n");
+
+		int tmp = rand()%10;
+		probability = tmp/10.0;
+		if(probability<=probabilityA)	//relaease A
 		{
-			sem_post(&sem_resource[0]);
-			resource1_collected=1;
-			//printf("Process 4 has released A\n");
+			sem_post(&sem_resourceA);	units_a++;
 		}
+		if(probability<=probabilityB)	
+		{
+			sem_post(&sem_resourceB);	units_b++;
+		}
+		if(probability<=probabilityD)	
+		{
+			sem_post(&sem_resourceD);	units_d++;
+		}
+
+		count[3]++;
+		cur_usingA--;	cur_usingB--;	cur_usingD--;
 	}
 
-	while(resource2_collected==0)
+	else
 	{
-		number2 =  rand( ) % 1000 + 1;
-		if(number2<=750)
-		{
-			sem_post(&sem_resource[1]);
-			resource2_collected=1;
-			//printf("Process 4 has released B\n");
-		}
+		printf("Process 1 failed to execute...\n");
 	}
 
-	while(resource4_collected==0)
-	{
-		number3 =  rand( ) % 1000 + 1;
-		if(number3<=666)
-		{
-			sem_post(&sem_resource[3]);
-			resource4_collected=1;
-			//printf("Process 4 has released D\n");
-		}
-	}
-
-	count4++;
-	printf("Process 4 has occured %d times.\n",count4);
-
+	if(count[3]<k)
+		process4_function(NULL);
 }
 
 void *process5_function(void *num)	//needs resources A
 {
   
-	int *i = num;
-	int number1;
+	sem_wait(&sem_main);
 
-	sem_wait(&sem_process[4]);
-	int resource1_collected;
-	resource1_collected=0;
-
-	//printf("Process 5 is waiting to enter critical section\n");
-	sem_wait(&sem_resource[0]);
-	//printf("Process 5 collected A\n");
-
-	printf("Process 5 is running...\n");
-	display_resources();
-	sem_post(&sem_process[4]);
-
-	while(resource1_collected==0)
+	if(units_a>=1)
 	{
-		number1 = rand( ) % 1000 + 1;
-		if(number1<=666)
+		
+		sem_wait(&sem_resourceA);
+		units_a--;	cur_usingA++;
+
+		printf("Process 5 running....\n");
+		display_resources();
+		printf("Process 5 ending....\n");
+
+		int tmp = rand()%10;
+		probability = tmp/10.0;
+		if(probability<=probabilityA)	//relaease A
 		{
-			sem_post(&sem_resource[0]);
-			resource1_collected=1;
-			//printf("Process 5 has released A\n");
+			sem_post(&sem_resourceA);	units_a++;
 		}
+		
+		count[4]++;
+		cur_usingA--;
 	}
 
+	else
+	{
+		printf("Process 5 failed to execute...\n");
+	}
 
-	count5++;
-	printf("Process 5 has occured %d times.\n",count5);
-  
+	if(count[4]<k)
+		process5_function(NULL);
 }
 
 void *process6_function(void *num)	//needs resources B
 {
   
-	int *i = num;
-	int number1;
+	sem_wait(&sem_main);
 
-	sem_wait(&sem_process[5]);
-	int resource2_collected;
-	resource2_collected=0;
-
-	//printf("Process 6 is waiting to enter critical section\n");
-	sem_wait(&sem_resource[1]);
-	//printf("Process 6 collected B\n");
-
-	printf("Process 6 is running...\n");
-	display_resources();
-	sem_post(&sem_process[5]);
-
-	while(resource2_collected==0)
+	if(units_b>=1)
 	{
-		number1 =  rand( ) % 1000 + 1;
-		if(number1<=750)
+		
+		sem_wait(&sem_resourceB);
+		units_b--;	cur_usingB++;
+
+		printf("Process 6 running....\n");
+		display_resources();
+		printf("Process 6 ending....\n");
+
+		int tmp = rand()%10;
+		probability = tmp/10.0;
+		if(probability<=probabilityB)	
 		{
-			sem_post(&sem_resource[1]);
-			resource2_collected=1;
-			//printf("Process 4 has released B\n");
+			sem_post(&sem_resourceB);	units_b++;
 		}
+		
+		count[5]++;
+		cur_usingB--;
 	}
 
+	else
+	{
+		printf("Process 6 failed to execute...\n");
+	}
 
-	count6++;
-	printf("Process 6 has occured %d times.\n",count6);
+	if(count[5]<k)
+		process6_function(NULL);
 }
 
 void *process7_function(void *num)	//needs resources C
 {
-	int *i = num;
-	int number1;
+  
+	sem_wait(&sem_main);
 
-
-	sem_wait(&sem_process[6]);
-	int resource3_collected;
-	resource3_collected=0;
-
-	//printf("Process 7 is waiting to enter critical section\n");
-	sem_wait(&sem_resource[2]);
-	//printf("Process 7 collected C\n");
-
-	printf("Process 7 is running...\n");
-	display_resources();
-	sem_post(&sem_process[6]);
-
-
-
-	while(resource3_collected==0)
+	if(units_c>=1)
 	{
-		number1 =  rand( ) % 1000 + 1;
-		if(number1<=600)
+		
+		sem_wait(&sem_resourceC);
+		units_c--;	cur_usingC++;
+
+		printf("Process 7 running....\n");
+		display_resources();
+		printf("Process 7 ending....\n");
+
+		int tmp = rand()%10;
+		probability = tmp/10.0;
+		if(probability<=probabilityC)	
 		{
-			sem_post(&sem_resource[2]);
-			resource3_collected=1;
-			//printf("Process 7 has released C\n");
+			sem_post(&sem_resourceC);	units_c++;
 		}
+		
+		count[6]++;
+		cur_usingC--;
 	}
 
+	else
+	{
+		printf("Process 7 failed to execute...\n");
+	}
 
-	count7++;
-	printf("Process 7 has occured %d times.\n",count7);
-
+	if(count[6]<k)
+		process7_function(NULL);
 }
 
 void *process8_function(void *num)	//needs resources D
 {
+  
+	sem_wait(&sem_main);
 
-	int *i = num;
-	int number1;
-
-	sem_wait(&sem_process[7]);
-	int resource4_collected;
-	resource4_collected=0;
-
-	//printf("Process 8 is waiting to enter critical section\n");
-	sem_wait(&sem_resource[3]);
-	//printf("Process 8 collected D\n");
-
-
-	printf("Process 8 is running...\n");
-	display_resources();
-	sem_post(&sem_process[7]);
-
-	while(resource4_collected==0)
+	if(units_d>=1)
 	{
-		number1 =  rand( ) % 1000 + 1;
-		if(number1<=666)
+		
+		sem_wait(&sem_resourceD);
+		units_d--;	cur_usingD++;
+
+		printf("Process 8 running....\n");
+		display_resources();
+		printf("Process 8 ending....\n");
+
+		int tmp = rand()%10;
+		probability = tmp/10.0;
+		if(probability<=probabilityD)	
 		{
-			sem_post(&sem_resource[3]);
-			resource4_collected=1;
-			//printf("Process 8 has released D\n");
+			sem_post(&sem_resourceD);	units_d++;
 		}
+		
+		count[6]++;
+		cur_usingD--;
 	}
 
+	else
+	{
+		printf("Process 8 failed to execute...\n");
+	}
 
-	count8++;
-	printf("Process 8 has occured %d times.\n",count8);
-
+	if(count[7]<k)
+		process8_function(NULL);
 }
-
 
 int main()
 {
@@ -426,7 +371,7 @@ int main()
 	printf("Enter k : ");
 	scanf("%u",&k);
 
-	pthread_t thread_id[k][8];	//create threads
+	pthread_t tID[k][8];	//create threads
 
 	printf("Enter units of A : ");	scanf("%u",&units_a);
 	printf("Enter units of B : ");	scanf("%u",&units_b);
@@ -434,26 +379,29 @@ int main()
 	printf("Enter units of D : ");	scanf("%u",&units_d);
 
 	//Semaphores for resources
-	sem_init(&sem_resource[0], 0, units_a);
-	sem_init(&sem_resource[1], 0, units_b);
-	sem_init(&sem_resource[2], 0, units_c);
-	sem_init(&sem_resource[3], 0, units_d);
+	sem_init(&sem_resourceA, 0, units_a);
+	sem_init(&sem_resourceB, 0, units_b);
+	sem_init(&sem_resourceC, 0, units_c);
+	sem_init(&sem_resourceD, 0, units_d);
 
 	//Semaphores for processes
+	sem_init(&sem_main, 0, 1);
+
+	/*
 	for(i=0; i<num_process; i++)
-		sem_init(&sem_process[i], 0, 1);
+		sem_init(&sem_process[i], 0, 1);*/
 
 	//create threads and assign them functions
 	for(i=0;i<k;i++)
 	{
-		pthread_create(&thread_id[i][0],NULL,process1_function,&i);
-		pthread_create(&thread_id[i][1],NULL,process2_function,&i);
-		pthread_create(&thread_id[i][2],NULL,process3_function,&i);
-		pthread_create(&thread_id[i][3],NULL,process4_function,&i);
-		pthread_create(&thread_id[i][4],NULL,process5_function,&i);
-		pthread_create(&thread_id[i][5],NULL,process6_function,&i);
-		pthread_create(&thread_id[i][6],NULL,process7_function,&i);
-		pthread_create(&thread_id[i][7],NULL,process8_function,&i);
+		pthread_create(&tID[i][0],NULL,process1_function,&i);
+		pthread_create(&tID[i][1],NULL,process2_function,&i);
+		pthread_create(&tID[i][2],NULL,process3_function,&i);
+		pthread_create(&tID[i][3],NULL,process4_function,&i);
+		pthread_create(&tID[i][4],NULL,process5_function,&i);
+		pthread_create(&tID[i][5],NULL,process6_function,&i);
+		pthread_create(&tID[i][6],NULL,process7_function,&i);
+		pthread_create(&tID[i][7],NULL,process8_function,&i);
 	}
 	
 	//join all threads
@@ -461,7 +409,7 @@ int main()
 	{
 		for(j=0; j<num_process; j++)
 		{
-			pthread_join(thread_id[i][j],NULL);
+			pthread_join(tID[i][j],NULL);
 		}
 
 	}
