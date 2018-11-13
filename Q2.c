@@ -49,7 +49,7 @@ void *process1_function(void *num)	//needs resources A,B,C
 		printf("Process 1 ending....\n");
 
 		int tmp = rand()%10;
-		probability = tmp/10.0;
+		double probability = tmp/10.0;
 		if(probability<=probabilityA)	//relaease A
 		{
 			sem_post(&sem_resourceA);	units_a++;
@@ -98,8 +98,8 @@ void *process2_function(void *num)	//needs resources B,C,D
 		printf("Process 2 ending....\n");
 
 		int tmp = rand()%10;
-		probability = tmp/10.0;
-		if(probability<=probabilityB)	//relaease A
+		double probability = tmp/10.0;
+		if(probability<=probabilityB)	
 		{
 			sem_post(&sem_resourceB);	units_b++;
 		}
@@ -148,7 +148,7 @@ void *process3_function(void *num)	//needs resources A,C,D
 		printf("Process 3 ending....\n");
 
 		int tmp = rand()%10;
-		probability = tmp/10.0;
+		double probability = tmp/10.0;
 		if(probability<=probabilityA)	
 		{
 			sem_post(&sem_resourceA);	units_a++;
@@ -197,7 +197,7 @@ void *process4_function(void *num)	//needs resources A,B,D
 		printf("Process 4 ending....\n");
 
 		int tmp = rand()%10;
-		probability = tmp/10.0;
+		double probability = tmp/10.0;
 		if(probability<=probabilityA)	//relaease A
 		{
 			sem_post(&sem_resourceA);	units_a++;
@@ -217,7 +217,7 @@ void *process4_function(void *num)	//needs resources A,B,D
 
 	else
 	{
-		printf("Process 1 failed to execute...\n");
+		printf("Process 4 failed to execute...\n");
 	}
 
 	if(count[3]<k)
@@ -240,7 +240,7 @@ void *process5_function(void *num)	//needs resources A
 		printf("Process 5 ending....\n");
 
 		int tmp = rand()%10;
-		probability = tmp/10.0;
+		double probability = tmp/10.0;
 		if(probability<=probabilityA)	//relaease A
 		{
 			sem_post(&sem_resourceA);	units_a++;
@@ -275,7 +275,7 @@ void *process6_function(void *num)	//needs resources B
 		printf("Process 6 ending....\n");
 
 		int tmp = rand()%10;
-		probability = tmp/10.0;
+		double probability = tmp/10.0;
 		if(probability<=probabilityB)	
 		{
 			sem_post(&sem_resourceB);	units_b++;
@@ -310,7 +310,7 @@ void *process7_function(void *num)	//needs resources C
 		printf("Process 7 ending....\n");
 
 		int tmp = rand()%10;
-		probability = tmp/10.0;
+		double probability = tmp/10.0;
 		if(probability<=probabilityC)	
 		{
 			sem_post(&sem_resourceC);	units_c++;
@@ -345,7 +345,7 @@ void *process8_function(void *num)	//needs resources D
 		printf("Process 8 ending....\n");
 
 		int tmp = rand()%10;
-		probability = tmp/10.0;
+		double probability = tmp/10.0;
 		if(probability<=probabilityD)	
 		{
 			sem_post(&sem_resourceD);	units_d++;
