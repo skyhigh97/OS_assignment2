@@ -11,10 +11,10 @@ int count[8] ={0};	//count no. of times process has run
 
 const int num_process = 8, num_resources = 4;
 
-double probabilityA = 2/3.0;	//probability of releasing
-double probabilityB = 3/4.0;
-double probabilityC = 3/5.0;
-double probabilityD = 2/3.0;
+double probabilityA =2.0/3.0;	//probability of releasing
+double probabilityB = 3.0/4.0;
+double probabilityC = 3.0/5.0;
+double probabilityD = 2.0/3.0;
 
 // semaphores for resources
 sem_t sem_resourceA, sem_resourceB, sem_resourceC, sem_resourceD;  
@@ -71,12 +71,14 @@ void *process1_function(void *num)	//needs resources A,B,C
 	{
 		printf("Process 1 failed to execute...\n");
 	}
+sem_post(&sem_main);
 
 	if((cur_usingA==0 && units_a==0) ||(cur_usingB==0 && units_b==0)|| (cur_usingC==0 && units_c==0))
 		pthread_exit(NULL);
 
 	if(count[0]<k)
 		process1_function(NULL);
+	pthread_exit(NULL);
 }
 
 void *process2_function(void *num)	//needs resources B,C,D
@@ -123,12 +125,14 @@ void *process2_function(void *num)	//needs resources B,C,D
 	{
 		printf("Process 2 failed to execute...\n");
 	}
+sem_post(&sem_main);
 
 	if((cur_usingD==0 && units_d==0) ||(cur_usingB==0 && units_b==0)|| (cur_usingC==0 && units_c==0))
 		pthread_exit(NULL);
 
 	if(count[1]<k)
 		process2_function(NULL);
+	pthread_exit(NULL);
 }
 
 
@@ -176,12 +180,14 @@ void *process3_function(void *num)	//needs resources A,C,D
 	{
 		printf("Process 3 failed to execute...\n");
 	}
+sem_post(&sem_main);
 
 	if((cur_usingA==0 && units_a==0) ||(cur_usingD==0 && units_d==0)|| (cur_usingC==0 && units_c==0))
 		pthread_exit(NULL);
 
 	if(count[2]<k)
 		process3_function(NULL);
+	pthread_exit(NULL);
 }
 
 void *process4_function(void *num)	//needs resources A,B,D
@@ -228,12 +234,14 @@ void *process4_function(void *num)	//needs resources A,B,D
 	{
 		printf("Process 4 failed to execute...\n");
 	}
+sem_post(&sem_main);
 
 	if((cur_usingA==0 && units_a==0) ||(cur_usingB==0 && units_b==0)|| (cur_usingD==0 && units_d==0))
 		pthread_exit(NULL);
 
 	if(count[3]<k)
 		process4_function(NULL);
+	pthread_exit(NULL);
 }
 
 void *process5_function(void *num)	//needs resources A
@@ -266,12 +274,14 @@ void *process5_function(void *num)	//needs resources A
 	{
 		printf("Process 5 failed to execute...\n");
 	}
+sem_post(&sem_main);
 
 	if(cur_usingA==0 && units_a==0)
 		pthread_exit(NULL);
 
 	if(count[4]<k)
 		process5_function(NULL);
+	pthread_exit(NULL);
 }
 
 void *process6_function(void *num)	//needs resources B
@@ -304,12 +314,14 @@ void *process6_function(void *num)	//needs resources B
 	{
 		printf("Process 6 failed to execute...\n");
 	}
+sem_post(&sem_main);
 
 	if(cur_usingB==0 && units_b==0)
 		pthread_exit(NULL);
 
 	if(count[5]<k)
 		process6_function(NULL);
+	pthread_exit(NULL);
 }
 
 void *process7_function(void *num)	//needs resources C
@@ -328,7 +340,7 @@ void *process7_function(void *num)	//needs resources C
 		printf("Process 7 ending....\n");
 
 		int tmp = rand()%10;
-		double probability = tmp/10.0;
+		double probability = (double)tmp/10.0;
 		if(probability<=probabilityC)	
 		{
 			sem_post(&sem_resourceC);	units_c++;
@@ -342,12 +354,14 @@ void *process7_function(void *num)	//needs resources C
 	{
 		printf("Process 7 failed to execute...\n");
 	}
+	sem_post(&sem_main);
 
 	if(cur_usingC==0 && units_c==0)
 		pthread_exit(NULL);
 
 	if(count[6]<k)
 		process7_function(NULL);
+	pthread_exit(NULL);
 }
 
 void *process8_function(void *num)	//needs resources D
@@ -366,7 +380,7 @@ void *process8_function(void *num)	//needs resources D
 		printf("Process 8 ending....\n");
 
 		int tmp = rand()%10;
-		double probability = tmp/10.0;
+		double probability = (double)tmp/10.0;
 		if(probability<=probabilityD)	
 		{
 			sem_post(&sem_resourceD);	units_d++;
@@ -380,6 +394,7 @@ void *process8_function(void *num)	//needs resources D
 	{
 		printf("Process 8 failed to execute...\n");
 	}
+	sem_post(&sem_main);
 
 	if(cur_usingD==0 && units_d==0)
 		pthread_exit(NULL);
@@ -387,6 +402,7 @@ void *process8_function(void *num)	//needs resources D
 
 	if(count[7]<k)
 		process8_function(NULL);
+	pthread_exit(NULL);
 }
 
 int main()
@@ -396,7 +412,7 @@ int main()
 	printf("Enter k : ");
 	scanf("%u",&k);
 
-	pthread_t tID[k][8];	//create threads
+	pthread_t tID[8];	//create threads
 
 	printf("Enter units of A : ");	scanf("%u",&units_a);
 	printf("Enter units of B : ");	scanf("%u",&units_b);
@@ -415,25 +431,25 @@ int main()
 	
 
 	//create threads and assign them functions
-	for(i=0;i<k;i++)
-	{
-		pthread_create(&tID[i][0],NULL,process1_function,&i);
-		pthread_create(&tID[i][1],NULL,process2_function,&i);
-		pthread_create(&tID[i][2],NULL,process3_function,&i);
-		pthread_create(&tID[i][3],NULL,process4_function,&i);
-		pthread_create(&tID[i][4],NULL,process5_function,&i);
-		pthread_create(&tID[i][5],NULL,process6_function,&i);
-		pthread_create(&tID[i][6],NULL,process7_function,&i);
-		pthread_create(&tID[i][7],NULL,process8_function,&i);
-	}
+	//for(i=0;i<k;i++)
+	//{
+		pthread_create(&tID[0],NULL,process1_function,NULL);
+		pthread_create(&tID[1],NULL,process2_function,NULL);
+		pthread_create(&tID[2],NULL,process3_function,NULL);
+		pthread_create(&tID[3],NULL,process4_function,NULL);
+		pthread_create(&tID[4],NULL,process5_function,NULL);
+		pthread_create(&tID[5],NULL,process6_function,NULL);
+		pthread_create(&tID[6],NULL,process7_function,NULL);
+		pthread_create(&tID[7],NULL,process8_function,NULL);
+	//}
 	
 	//join all threads
-	for(i=0;i<k;i++)
+	for(i=0;i<8;i++)
 	{
-		for(j=0; j<num_process; j++)
-		{
-			pthread_join(tID[i][j],NULL);
-		}
+		//for(j=0; j<num_process; j++)
+		//{
+			pthread_join(tID[i],NULL);
+		//}
 
 	}
 
