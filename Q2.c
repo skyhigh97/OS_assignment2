@@ -72,6 +72,9 @@ void *process1_function(void *num)	//needs resources A,B,C
 		printf("Process 1 failed to execute...\n");
 	}
 
+	if((cur_usingA==0 && units_a==0) ||(cur_usingB==0 && units_b==0)|| (cur_usingC==0 && units_c==0))
+		pthread_exit(NULL);
+
 	if(count[0]<k)
 		process1_function(NULL);
 }
@@ -120,6 +123,9 @@ void *process2_function(void *num)	//needs resources B,C,D
 	{
 		printf("Process 2 failed to execute...\n");
 	}
+
+	if((cur_usingD==0 && units_d==0) ||(cur_usingB==0 && units_b==0)|| (cur_usingC==0 && units_c==0))
+		pthread_exit(NULL);
 
 	if(count[1]<k)
 		process2_function(NULL);
@@ -171,6 +177,9 @@ void *process3_function(void *num)	//needs resources A,C,D
 		printf("Process 3 failed to execute...\n");
 	}
 
+	if((cur_usingA==0 && units_a==0) ||(cur_usingD==0 && units_d==0)|| (cur_usingC==0 && units_c==0))
+		pthread_exit(NULL);
+
 	if(count[2]<k)
 		process3_function(NULL);
 }
@@ -220,6 +229,9 @@ void *process4_function(void *num)	//needs resources A,B,D
 		printf("Process 4 failed to execute...\n");
 	}
 
+	if((cur_usingA==0 && units_a==0) ||(cur_usingB==0 && units_b==0)|| (cur_usingD==0 && units_d==0))
+		pthread_exit(NULL);
+
 	if(count[3]<k)
 		process4_function(NULL);
 }
@@ -254,6 +266,9 @@ void *process5_function(void *num)	//needs resources A
 	{
 		printf("Process 5 failed to execute...\n");
 	}
+
+	if(cur_usingA==0 && units_a==0)
+		pthread_exit(NULL);
 
 	if(count[4]<k)
 		process5_function(NULL);
@@ -290,6 +305,9 @@ void *process6_function(void *num)	//needs resources B
 		printf("Process 6 failed to execute...\n");
 	}
 
+	if(cur_usingB==0 && units_b==0)
+		pthread_exit(NULL);
+
 	if(count[5]<k)
 		process6_function(NULL);
 }
@@ -324,6 +342,9 @@ void *process7_function(void *num)	//needs resources C
 	{
 		printf("Process 7 failed to execute...\n");
 	}
+
+	if(cur_usingC==0 && units_c==0)
+		pthread_exit(NULL);
 
 	if(count[6]<k)
 		process7_function(NULL);
@@ -360,6 +381,10 @@ void *process8_function(void *num)	//needs resources D
 		printf("Process 8 failed to execute...\n");
 	}
 
+	if(cur_usingD==0 && units_d==0)
+		pthread_exit(NULL);
+
+
 	if(count[7]<k)
 		process8_function(NULL);
 }
@@ -387,9 +412,7 @@ int main()
 	//Semaphores for processes
 	sem_init(&sem_main, 0, 1);
 
-	/*
-	for(i=0; i<num_process; i++)
-		sem_init(&sem_process[i], 0, 1);*/
+	
 
 	//create threads and assign them functions
 	for(i=0;i<k;i++)
