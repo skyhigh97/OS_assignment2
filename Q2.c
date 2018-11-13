@@ -71,7 +71,7 @@ void *process1_function(void *num)	//needs resources A,B,C
 	{
 		printf("Process 1 failed to execute...\n");
 	}
-sem_post(&sem_main);
+	sem_post(&sem_main);
 
 	if((cur_usingA==0 && units_a==0) ||(cur_usingB==0 && units_b==0)|| (cur_usingC==0 && units_c==0))
 		pthread_exit(NULL);
@@ -125,7 +125,7 @@ void *process2_function(void *num)	//needs resources B,C,D
 	{
 		printf("Process 2 failed to execute...\n");
 	}
-sem_post(&sem_main);
+	sem_post(&sem_main);
 
 	if((cur_usingD==0 && units_d==0) ||(cur_usingB==0 && units_b==0)|| (cur_usingC==0 && units_c==0))
 		pthread_exit(NULL);
@@ -180,7 +180,7 @@ void *process3_function(void *num)	//needs resources A,C,D
 	{
 		printf("Process 3 failed to execute...\n");
 	}
-sem_post(&sem_main);
+	sem_post(&sem_main);
 
 	if((cur_usingA==0 && units_a==0) ||(cur_usingD==0 && units_d==0)|| (cur_usingC==0 && units_c==0))
 		pthread_exit(NULL);
@@ -234,7 +234,7 @@ void *process4_function(void *num)	//needs resources A,B,D
 	{
 		printf("Process 4 failed to execute...\n");
 	}
-sem_post(&sem_main);
+	sem_post(&sem_main);
 
 	if((cur_usingA==0 && units_a==0) ||(cur_usingB==0 && units_b==0)|| (cur_usingD==0 && units_d==0))
 		pthread_exit(NULL);
@@ -274,7 +274,7 @@ void *process5_function(void *num)	//needs resources A
 	{
 		printf("Process 5 failed to execute...\n");
 	}
-sem_post(&sem_main);
+	sem_post(&sem_main);
 
 	if(cur_usingA==0 && units_a==0)
 		pthread_exit(NULL);
@@ -314,7 +314,7 @@ void *process6_function(void *num)	//needs resources B
 	{
 		printf("Process 6 failed to execute...\n");
 	}
-sem_post(&sem_main);
+	sem_post(&sem_main);
 
 	if(cur_usingB==0 && units_b==0)
 		pthread_exit(NULL);
@@ -427,31 +427,21 @@ int main()
 
 	//Semaphores for processes
 	sem_init(&sem_main, 0, 1);
-
 	
-
-	//create threads and assign them functions
-	//for(i=0;i<k;i++)
-	//{
-		pthread_create(&tID[0],NULL,process1_function,NULL);
-		pthread_create(&tID[1],NULL,process2_function,NULL);
-		pthread_create(&tID[2],NULL,process3_function,NULL);
-		pthread_create(&tID[3],NULL,process4_function,NULL);
-		pthread_create(&tID[4],NULL,process5_function,NULL);
-		pthread_create(&tID[5],NULL,process6_function,NULL);
-		pthread_create(&tID[6],NULL,process7_function,NULL);
-		pthread_create(&tID[7],NULL,process8_function,NULL);
-	//}
+	
+	pthread_create(&tID[0],NULL,process1_function,NULL);
+	pthread_create(&tID[1],NULL,process2_function,NULL);
+	pthread_create(&tID[2],NULL,process3_function,NULL);
+	pthread_create(&tID[3],NULL,process4_function,NULL);
+	pthread_create(&tID[4],NULL,process5_function,NULL);
+	pthread_create(&tID[5],NULL,process6_function,NULL);
+	pthread_create(&tID[6],NULL,process7_function,NULL);
+	pthread_create(&tID[7],NULL,process8_function,NULL);
+	
 	
 	//join all threads
 	for(i=0;i<8;i++)
-	{
-		//for(j=0; j<num_process; j++)
-		//{
-			pthread_join(tID[i],NULL);
-		//}
-
-	}
+		pthread_join(tID[i],NULL);
 
 	return 0;
 }
