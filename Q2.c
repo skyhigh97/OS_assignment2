@@ -386,7 +386,7 @@ void *process8_function(void *num)	//needs resources D
 			sem_post(&sem_resourceD);	units_d++;
 		}
 		
-		count[6]++;
+		count[7]++;
 		cur_usingD--;
 	}
 
@@ -427,7 +427,7 @@ int main()
 
 	//Semaphores for processes
 	sem_init(&sem_main, 0, 1);
-	
+
 	
 	pthread_create(&tID[0],NULL,process1_function,NULL);
 	pthread_create(&tID[1],NULL,process2_function,NULL);
