@@ -11,7 +11,11 @@ const int num_process = 8, num_resources = 4;
 sem_t sem_resource[4];  // semaphores for resources
 sem_t sem_process[8]; 	// semaphores for processes
 
-
+void display_resources()
+{
+	printf("Resources Remaining : ");
+	printf("A: %u   B: %u  C: %u  D: %u\n",units_a,units_b,units_c,units_d);
+}
 
 void *process1_function(void *num)	//needs resources A,B,C
 {
@@ -27,17 +31,19 @@ void *process1_function(void *num)	//needs resources A,B,C
 
 	printf("Process 1 is waiting to enter critical section\n");
 	sem_wait(&sem_resource[0]);
-	printf("Process 1 collected resource A\n");
+	//printf("Process 1 collected resource A\n");
 
 	sem_wait(&sem_resource[1]);
-	printf("Process 1 collected resource B\n");
+	//printf("Process 1 collected resource B\n");
 
 	sem_wait(&sem_resource[2]);
-	printf("Process 1 collected resource C\n");
-
-	printf("Process 1 has entered critical section\n");
+	//printf("Process 1 collected resource C\n");
+	
+	printf("Process 1 is running...\n");
 	sem_post(&sem_process[0]);
 
+	display_resources();
+	
 	while(resource1_collected==0)
 	{
 		number1 = rand( ) % 1000 + 1;
@@ -73,7 +79,7 @@ void *process1_function(void *num)	//needs resources A,B,C
 
 
 	count1++;
-		printf("Process 1 has occured %d times till now. LALALALALALALLALALA\n",count1);
+		printf("Process 1 has occured %d times till now. \n",count1);
   
 }
 
